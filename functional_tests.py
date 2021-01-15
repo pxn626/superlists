@@ -33,10 +33,19 @@ class NewVisitorTest(unittest.TestCase):
         rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
             any(row.text == '1: Buy Fish' for row in rows),
-            "New ti-do item did not appear in table"
+            f"New ti-do item did not appear in table. Contents were:\n{table.text}"
         )
         # in text input "Buy rice"
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy rice')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
         # ENTER
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Buy Fish', [row.text for row in rows])
+        self.assertIn('2: Buy rice', [row.text for row in rows])
+        
         # in text output "2: Buy rice"
         self.fail('Finish the test')
         # output the only URL
