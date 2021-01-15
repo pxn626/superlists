@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 import unittest
 import time
 
+
 class NewVisitorTest(unittest.TestCase):
 
     def setUp(self):
@@ -10,7 +11,14 @@ class NewVisitorTest(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
+    
+    # 辅助方法
+    def check_for_row_in_list_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
 
+    # 测试方法
     def test_can_start_a_list_and_retrieve_it_later(self):
         # open index  
         self.browser.get('http://localhost:8000')
@@ -29,23 +37,15 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
         # IN text output "1: Buy Fish"
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Buy Fish' for row in rows),
-            f"New ti-do item did not appear in table. Contents were:\n{table.text}"
-        )
+        self.check_for_row_in_list_table('1: Buy Fish')
         # in text input "Buy rice"
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Buy rice')
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
         # ENTER
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy Fish', [row.text for row in rows])
-        self.assertIn('2: Buy rice', [row.text for row in rows])
-        
+        self.check_for_row_in_list_table('1: Buy Fish')
+        self.check_for_row_in_list_table('2: Buy rice')
         # in text output "2: Buy rice"
         self.fail('Finish the test')
         # output the only URL
