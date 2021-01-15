@@ -30,9 +30,10 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
         # IN text output "1: Buy Fish"
         table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_element_by_tag_name('tr')
+        rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
-            any(row.text == '1: Buy Fish' for row in rows)
+            any(row.text == '1: Buy Fish' for row in rows),
+            "New ti-do item did not appear in table"
         )
         # in text input "Buy rice"
         # ENTER
